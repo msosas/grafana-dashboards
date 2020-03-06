@@ -1,0 +1,86 @@
+{
+  "_comment": "need worldmap plugin",  
+  "datasource": "Icinga2",
+  "autoPanLabels": true,
+  "autoWidthLabels": true,
+  "circleMaxSize": "30",
+  "circleMinSize": "10",
+  "colors": [
+    "#96D98D",
+    "#FFB357",
+    "#FF7383",
+    "#CA95E5"
+  ],
+  "decimals": 0,
+  "esMetric": "Count",
+  "gridPos": {
+    "h": 14,
+    "w": 24,
+    "x": 0,
+    "y": 18
+  },
+  "hideEmpty": true,
+  "hideZero": false,
+  "id": 4,
+  "initialZoom": "5",
+  "legendContainerSelector": null,
+  "locationData": "table",
+  "mapCenter": "custom",
+  "mapCenterLatitude": "-31",
+  "mapCenterLongitude": "134",
+  "maxDataPoints": 1,
+  "mouseWheelZoom": true,
+  "options": {},
+  "showAttribution": false,
+  "showLegend": false,
+  "showZoomControl": true,
+  "stickyLabels": false,
+  "tableQueryOptions": {
+    "geohashField": "geohash",
+    "labelField": "name",
+    "latitudeField": "latitude",
+    "longitudeField": "longitude",
+    "metricField": "metric",
+    "queryType": "coordinates"
+  },
+  "targets": [
+    {
+      "format": "table",
+      "group": [],
+      "metricColumn": "none",
+      "rawQuery": true,
+      "rawSql": "SELECT\n\nicinga_hosts.display_name as name, max(serv_status.current_state) as metric,\nsubstring_index(icinga_hosts.notes,',',1) as latitude, substring_index(substring_index(icinga_hosts.notes,',',2),',',-1 ) as longitude\nFROM icinga_objects \nINNER JOIN icinga_hosts ON object_id=host_object_id\nINNER JOIN icinga_hoststatus ON object_id=icinga_hoststatus.host_object_id\nINNER JOIN icinga_services ON icinga_services.host_object_id = icinga_hosts.host_object_id\nINNER JOIN \n  (SELECT *  FROM icinga_servicestatus WHERE icinga_servicestatus.problem_has_been_acknowledged != 1) serv_status ON serv_status.service_object_id = icinga_services.service_object_id\n\nWHERE $__timeFilter(serv_status.status_update_time)\nAND is_active = 1 AND icinga_hosts.notes!=\"\" \n\nGROUP BY object_id\n\n",
+      "refId": "A",
+      "select": [
+        [
+          {
+            "params": [
+              "acknowledgement_id"
+            ],
+            "type": "column"
+          }
+        ]
+      ],
+      "table": "icinga_acknowledgements",
+      "timeColumn": "entry_time",
+      "timeColumnType": "timestamp",
+      "where": [
+        {
+          "name": "$__timeFilter",
+          "params": [],
+          "type": "macro"
+        }
+      ]
+    }
+  ],
+  "thresholds": "1,2,3",
+  "timeFrom": null,
+  "timeShift": null,
+  "title": "Australia",
+  "transparent": true,
+  "type": "grafana-worldmap-panel",
+  "unitPlural": "",
+  "unitSingle": "",
+  "unitSingular": "",
+  "valueName": "current"
+}

@@ -1,0 +1,110 @@
+{
+  "datasource": "Icinga2",
+  "cacheTimeout": null,
+  "colorBackground": true,
+  "colorPostfix": false,
+  "colorPrefix": false,
+  "colorValue": false,
+  "colors": [
+    "#96D98D",
+    "#FF7383",
+    "#d44a3a"
+  ],
+  "format": "none",
+  "gauge": {
+    "maxValue": 100,
+    "minValue": 0,
+    "show": false,
+    "thresholdLabels": false,
+    "thresholdMarkers": true
+  },
+  "gridPos": {
+    "h": 8,
+    "w": 8,
+    "x": 0,
+    "y": 3
+  },
+  "id": 7,
+  "interval": null,
+  "links": [],
+  "mappingType": 1,
+  "mappingTypes": [
+    {
+      "name": "value to text",
+      "value": 1
+    },
+    {
+      "name": "range to text",
+      "value": 2
+    }
+  ],
+  "maxDataPoints": 100,
+  "nullPointMode": "connected",
+  "nullText": null,
+  "options": {},
+  "postfix": "",
+  "postfixFontSize": "200%",
+  "prefix": "",
+  "prefixFontSize": "200%",
+  "rangeMaps": [
+    {
+      "from": "null",
+      "text": "N/A",
+      "to": "null"
+    }
+  ],
+  "sparkline": {
+    "fillColor": "rgba(31, 118, 189, 0.18)",
+    "full": false,
+    "lineColor": "rgb(31, 120, 193)",
+    "show": false,
+    "ymax": null,
+    "ymin": null
+  },
+  "tableColumn": "",
+  "targets": [
+    {
+      "format": "table",
+      "group": [],
+      "metricColumn": "none",
+      "rawQuery": true,
+      "rawSql": "SELECT count(*)\nFROM icinga_objects\nINNER JOIN icinga_hosts ON object_id=host_object_id\nINNER JOIN icinga_hoststatus ON icinga_hoststatus.host_object_id=icinga_hosts.host_object_id\nWHERE is_active = 1 AND current_state = 1 AND problem_has_been_acknowledged != 1;",
+      "refId": "A",
+      "select": [
+        [
+          {
+            "params": [
+              "acknowledgement_id"
+            ],
+            "type": "column"
+          }
+        ]
+      ],
+      "table": "icinga_acknowledgements",
+      "timeColumn": "entry_time",
+      "timeColumnType": "timestamp",
+      "where": [
+        {
+          "name": "$__timeFilter",
+          "params": [],
+          "type": "macro"
+        }
+      ]
+    }
+  ],
+  "thresholds": "1",
+  "timeFrom": null,
+  "timeShift": null,
+  "title": "Hosts Down",
+  "transparent": true,
+  "type": "singlestat",
+  "valueFontSize": "200%",
+  "valueMaps": [
+    {
+      "op": "=",
+      "text": "N/A",
+      "value": "null"
+    }
+  ],
+  "valueName": "current"
+}

@@ -1,0 +1,103 @@
+{
+  "datasource": "Icinga2",
+  "columns": [],
+  "fontSize": "100%",
+  "gridPos": {
+    "h": 16,
+    "w": 20,
+    "x": 4,
+    "y": 18
+  },
+  "id": 3,
+  "links": [],
+  "options": {},
+  "pageSize": null,
+  "scroll": true,
+  "showHeader": true,
+  "sort": {
+    "col": 2,
+    "desc": true
+  },
+  "styles": [
+    {
+      "alias": "Since",
+      "align": "center",
+      "dateFormat": "YYYY-MM-DD HH:mm:ss",
+      "pattern": "Time",
+      "sanitize": false,
+      "type": "string"
+    },
+    {
+      "alias": "",
+      "align": "auto",
+      "colorMode": "row",
+      "colors": [
+        "#96D98D",
+        "#FFB357",
+        "#FF7383"
+      ],
+      "dateFormat": "YYYY-MM-DD HH:mm:ss",
+      "decimals": 2,
+      "mappingType": 1,
+      "pattern": "State",
+      "thresholds": [
+        "1",
+        "2"
+      ],
+      "type": "string",
+      "unit": "s",
+      "valueMaps": [
+        {
+          "text": "WARNING",
+          "value": "1"
+        },
+        {
+          "text": "OK",
+          "value": "0"
+        },
+        {
+          "text": "CRITICAL",
+          "value": "2"
+        },
+        {
+          "text": "UNKOWN",
+          "value": "3"
+        }
+      ]
+    }
+  ],
+  "targets": [
+    {
+      "alias": "",
+      "expr": "",
+      "format": "table",
+      "group": [],
+      "intervalFactor": 2,
+      "metricColumn": "none",
+      "rawQuery": true,
+      "rawSql": "SELECT\nicinga_hosts.display_name as Host,\ncheck_command as Command,\nicinga_servicestatus.current_state as State,\nicinga_servicestatus.output as Message,\nDATE_FORMAT(icinga_servicestatus.last_time_ok,'%d/%m/%Y %h:%i:%s') as Time\nFROM icinga_objects \nINNER JOIN icinga_hosts ON object_id=host_object_id\nINNER JOIN icinga_services ON icinga_services.host_object_id = icinga_hosts.host_object_id\nINNER JOIN icinga_servicestatus ON icinga_servicestatus.service_object_id = icinga_services.service_object_id\n\nWHERE $__timeFilter(icinga_servicestatus.status_update_time) \nAND is_active = 1 AND  is_reachable=1 AND problem_has_been_acknowledged!=1\n\nORDER BY status_update_time DESC",
+      "refId": "A",
+      "select": [
+        [
+          {
+            "params": [
+              "value"
+            ],
+            "type": "column"
+          }
+        ]
+      ],
+      "timeColumn": "time",
+      "where": [
+        {
+          "name": "$__timeFilter",
+          "params": [],
+          "type": "macro"
+        }
+      ]
+    }
+  ],
+  "title": "Check Command Output",
+  "transform": "table",
+  "type": "table"
+}
